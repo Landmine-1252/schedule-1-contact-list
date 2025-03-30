@@ -7,11 +7,50 @@
     <!-- Pico CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
     <link rel="stylesheet" href="styles.css">
+    <style>
+      .app-instructions {
+        margin-bottom: 1.5rem;
+        padding: 0.5rem 1rem;
+        background-color: var(--card-background-color);
+        border-radius: var(--border-radius);
+        border-left: 4px solid var(--primary);
+      }
+
+      .app-instructions summary {
+        cursor: pointer;
+        font-weight: bold;
+        padding: 0.5rem 0;
+      }
+
+      .app-instructions summary:hover {
+        color: var(--primary);
+      }
+
+      .app-description {
+        margin-top: 0.5rem;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <header>
-        <h1>Schedule 1 - Customer List</h1>
+        <h1>Favorite Finder - Customer Preference Analysis</h1>
+        
+        <details class="app-instructions" open>
+          <summary>Instructions (click to expand/collapse)</summary>
+          <div class="app-description">
+            <p>This tool helps you identify the optimal combinations of favorites to stock in each area. 
+            The goal is to find the minimum set of favorites needed to satisfy at least 8 customers per area.</p>
+            <p>How to use this tool:</p>
+            <ul>
+              <li>View the "Customer Coverage Analysis" for optimal favorite combinations</li>
+              <li>Filter by Area, Standards, or specific Favorites to refine recommendations</li>
+              <li>Toggle between "Match all" or "Match any" mode for favorite filters</li>
+              <li>Search by customer name to find specific preferences</li>
+            </ul>
+          </div>
+        </details>
+        
         <div class="theme-switcher">
           <button id="themeToggle">Toggle Theme</button>
         </div>
