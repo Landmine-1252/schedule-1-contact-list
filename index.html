@@ -121,6 +121,9 @@
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
         
+        // Set initial state of match all toggle
+        document.getElementById('matchAllToggle').checked = activeFilters.matchAllFavorites;
+        
         try {
           // Load data and colors
           const [peopleData, colorsData] = await Promise.all([
