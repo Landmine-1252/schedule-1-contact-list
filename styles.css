@@ -547,4 +547,148 @@ main {
 
 .filter-mode input[type="checkbox"] {
   margin: 0;
+}
+
+.favorites-summary {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--card-background-color);
+  border-radius: var(--border-radius);
+}
+
+.favorites-summary summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.favorites-summary summary:hover {
+  color: var(--primary);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.area-summary {
+  padding: 1rem;
+  border: 1px solid var(--card-border-color);
+  border-radius: var(--border-radius);
+}
+
+.favorite-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+}
+
+.favorite-stat .tag {
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.favorite-stat .percentage {
+  font-size: 0.9rem;
+  color: var(--muted-color);
+}
+
+.coverage-analysis {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--card-background-color);
+  border-radius: var(--border-radius);
+}
+
+.coverage-analysis summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.coverage-analysis summary:hover {
+  color: var(--primary);
+}
+
+.coverage-set {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid var(--card-border-color);
+  border-radius: var(--border-radius);
+}
+
+.coverage-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.coverage-info {
+  font-size: 0.9rem;
+  color: var(--muted-color);
+}
+
+.current-analysis {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--card-background-color);
+  border-radius: var(--border-radius);
+}
+
+.recommendations-panel {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--card-background-color);
+  border-radius: var(--border-radius);
+}
+
+.recommendations-panel summary,
+.coverage-analysis summary,
+.area-analysis summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.recommendations-panel summary:hover,
+.coverage-analysis summary:hover,
+.area-analysis summary:hover {
+  color: var(--primary);
+}
+
+.recommendations-content {
+  margin-top: 1rem;
+}
+
+.coverage-analysis,
+.area-analysis {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--card-border-color);
+  border-radius: var(--border-radius);
+}
+
+.filter-info {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(var(--primary-rgb), 0.1);
+  border-radius: var(--border-radius);
+}
+
+.combo-result {
+  margin: 0.5rem 0 1rem 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid var(--muted-border-color);
+}
+
+.coverage-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.coverage-info {
+  font-size: 0.9rem;
+  color: var(--muted-color);
 } 

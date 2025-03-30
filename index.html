@@ -67,6 +67,14 @@
         </div>
 
         <div class="content-area">
+          <!-- Recommendations Tool -->
+          <details class="coverage-analysis" open>
+            <summary>Customer Coverage Analysis</summary>
+            <div id="coverageContent">
+              <!-- Will be populated dynamically -->
+            </div>
+          </details>
+
           <!-- Name Search -->
           <div class="search-wrapper">
             <label for="nameSearch">Search by Name:</label>
@@ -84,7 +92,7 @@
       </main>
 
       <footer>
-        <p>Schedule 1 Customer Profiles - 2023</p>
+        <p>https://github.com/Landmine-1252/schedule-1-contact-list</p>
       </footer>
     </div>
 
@@ -158,6 +166,10 @@
           document.querySelectorAll('.filter-accordion').forEach(accordion => {
             accordion.setAttribute('open', '');
           });
+
+          // Calculate initial recommendations (unfiltered)
+          calculateOptimalCoverage();
+          calculateAreaAnalysis();
         } catch (err) {
           console.error('Error loading data:', err);
           const resultsContainer = document.getElementById('results');
@@ -376,6 +388,134 @@
         });
       }
 
+      function calculateFavoritesSummary() {
+        const summary = {};
+        const areaCount = {};
+        
+        // Initialize area counts
+        rawData.forEach(person => {
+          if (!summary[person.Area]) {
+            summary[person.Area] = {};
+            areaCount[person.Area] = 0;
+          }
+          areaCount[person.Area]++;
+          
+          // Count favorites in this area
+          person.Favorites.forEach(fav => {
+            summary[person.Area][fav] = (summary[person.Area][fav] || 0) + 1;
+          });
+        });
+
+        const summaryContent = document.getElementById('summaryContent');
+        summaryContent.innerHTML = '';
+
+        // Create summary for each area
+        Object.keys(summary).sort().forEach(area => {
+          const areaDiv = document.createElement('div');
+          areaDiv.className = 'area-summary';
+          
+          const areaTitle = document.createElement('h4');
+          areaTitle.textContent = area;
+          areaDiv.appendChild(areaTitle);
+
+          // Sort favorites by popularity
+          const sortedFavorites = Object.entries(summary[area])
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 5); // Show top 5 favorites
+
+          sortedFavorites.forEach(([fav, count]) => {
+            const favDiv = document.createElement('div');
+            favDiv.className = 'favorite-stat';
+            
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.textContent = fav;
+            
+            if (favoriteColors[fav]) {
+              tag.style.backgroundColor = favoriteColors[fav];
+              tag.style.color = getContrastColor(favoriteColors[fav]);
+            }
+            
+            const percentage = document.createElement('span');
+            percentage.className = 'percentage';
+            const percentValue = ((count / areaCount[area]) * 100).toFixed(1);
+            percentage.textContent = `${percentValue}% (${count})`;
+            
+            favDiv.appendChild(tag);
+            favDiv.appendChild(percentage);
+            areaDiv.appendChild(favDiv);
+          });
+
+          summaryContent.appendChild(areaDiv);
+        });
+      }
+
+      function updateAnalysis() {
+        // Calculate stats based on current filtered data
+        const analysis = {};
+        const areaCount = {};
+        
+        filteredData.forEach(person => {
+          if (!analysis[person.Area]) {
+            analysis[person.Area] = {};
+            areaCount[person.Area] = 0;
+          }
+          areaCount[person.Area]++;
+          
+          person.Favorites.forEach(fav => {
+            analysis[person.Area][fav] = (analysis[person.Area][fav] || 0) + 1;
+          });
+        });
+
+        // Display current analysis
+        const analysisContent = document.getElementById('analysisContent');
+        analysisContent.innerHTML = '';
+
+        if (Object.keys(analysis).length === 0) {
+          analysisContent.innerHTML = '<p>No results match current filters</p>';
+          return;
+        }
+
+        Object.keys(analysis).sort().forEach(area => {
+          const areaDiv = document.createElement('div');
+          areaDiv.className = 'area-summary';
+          
+          const areaTitle = document.createElement('h4');
+          areaTitle.textContent = `${area} (${areaCount[area]} customers)`;
+          areaDiv.appendChild(areaTitle);
+
+          // Sort and show top favorites for filtered results
+          const sortedFavorites = Object.entries(analysis[area])
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 5);
+
+          sortedFavorites.forEach(([fav, count]) => {
+            const favDiv = document.createElement('div');
+            favDiv.className = 'favorite-stat';
+            
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.textContent = fav;
+            
+            if (favoriteColors[fav]) {
+              tag.style.backgroundColor = favoriteColors[fav];
+              tag.style.color = getContrastColor(favoriteColors[fav]);
+            }
+            
+            const percentage = document.createElement('span');
+            percentage.className = 'percentage';
+            const percentValue = ((count / areaCount[area]) * 100).toFixed(1);
+            percentage.textContent = `${percentValue}% (${count})`;
+            
+            favDiv.appendChild(tag);
+            favDiv.appendChild(percentage);
+            areaDiv.appendChild(favDiv);
+          });
+
+          analysisContent.appendChild(areaDiv);
+        });
+      }
+
       // Filter the data based on all active filters
       function filterData() {
         // Show a loading state
@@ -414,6 +554,9 @@
           
           // Update the filter counts
           updateFilterCounts();
+          
+          // Recalculate coverage analysis
+          calculateOptimalCoverage();
           
           // Update the results count
           document.getElementById('filteredCount').textContent = filteredData.length;
@@ -505,6 +648,274 @@
         
         // Return black for bright colors, white for dark ones
         return luminance > 0.5 ? '#000000' : '#ffffff';
+      }
+
+      // Calculate optimal combinations of favorites to cover at least 8 customers per area
+      function calculateOptimalCoverage() {
+        const coverageContent = document.getElementById('coverageContent');
+        coverageContent.innerHTML = '';
+
+        // Check if filters are applied
+        const filtersApplied = activeFilters.areas.length > 0 || 
+                               activeFilters.standards.length > 0 || 
+                               activeFilters.favorites.length > 0 || 
+                               activeFilters.nameSearch.trim() !== '';
+        
+        // Use filtered data if filters are applied, otherwise use raw data
+        const dataToUse = filtersApplied ? filteredData : rawData;
+
+        // Add notice when showing filtered results
+        if (filtersApplied) {
+          const filterInfo = document.createElement('div');
+          filterInfo.className = 'filter-info';
+          filterInfo.innerHTML = '<p><strong>Note:</strong> Recommendations are based on your current filter selection.</p>';
+          coverageContent.appendChild(filterInfo);
+        }
+
+        // Group customers by area
+        const areaCustomers = {};
+        dataToUse.forEach(person => {
+          if (!areaCustomers[person.Area]) {
+            areaCustomers[person.Area] = [];
+          }
+          areaCustomers[person.Area].push(person);
+        });
+
+        // Sort areas alphabetically
+        const sortedAreas = Object.keys(areaCustomers).sort();
+
+        // For each area, find minimal favorite combinations that cover 8+ people
+        sortedAreas.forEach(area => {
+          const customers = areaCustomers[area];
+          
+          const areaDiv = document.createElement('div');
+          areaDiv.className = 'coverage-set';
+          
+          const areaTitle = document.createElement('h4');
+          areaTitle.textContent = `${area} (${customers.length} total customers)`;
+          areaDiv.appendChild(areaTitle);
+
+          // Skip areas with too few customers
+          if (customers.length < 8) {
+            const noResults = document.createElement('p');
+            noResults.textContent = `Only ${customers.length} customers - insufficient to meet 8+ target`;
+            areaDiv.appendChild(noResults);
+            coverageContent.appendChild(areaDiv);
+            return;
+          }
+
+          // Get all favorites in this area
+          const areaFavorites = [...new Set(customers.flatMap(p => p.Favorites))];
+          
+          // Find combinations of any size that cover 8+ customers
+          let bestCombinations = [];
+          let size = 1;
+          const MAX_SIZE = Math.min(areaFavorites.length, 5); // Limit to 5 favorites max for performance
+          
+          // For each combination size, try to find combinations that cover 8+ customers
+          while (bestCombinations.length === 0 && size <= MAX_SIZE) {
+            bestCombinations = findCombinationsForArea(areaFavorites, size, customers);
+            size++;
+          }
+
+          // Display results for this area
+          if (bestCombinations.length === 0) {
+            const noResults = document.createElement('p');
+            noResults.textContent = 'No combination found that covers 8+ customers';
+            areaDiv.appendChild(noResults);
+          } else {
+            const bestHeader = document.createElement('p');
+            bestHeader.innerHTML = '<strong>Best Options:</strong>';
+            bestHeader.style.marginTop = '0.5rem';
+            areaDiv.appendChild(bestHeader);
+            
+            // Show top 3 most efficient combinations
+            bestCombinations.slice(0, 3).forEach(combo => {
+              const comboDiv = document.createElement('div');
+              comboDiv.className = 'combo-result';
+
+              // Show the favorites as tags
+              const tagsDiv = document.createElement('div');
+              tagsDiv.className = 'coverage-tags';
+
+              combo.favorites.forEach(fav => {
+                const tag = document.createElement('span');
+                tag.className = 'tag';
+                tag.textContent = fav;
+                
+                if (favoriteColors[fav]) {
+                  tag.style.backgroundColor = favoriteColors[fav];
+                  tag.style.color = getContrastColor(favoriteColors[fav]);
+                }
+                
+                tagsDiv.appendChild(tag);
+              });
+
+              // Show coverage info
+              const info = document.createElement('div');
+              info.className = 'coverage-info';
+              info.textContent = `Combined: ${combo.coverage} customers (${combo.percentage}%)`;
+              
+              // Add breakdown of each favorite's individual coverage
+              const breakdownDiv = document.createElement('div');
+              breakdownDiv.className = 'breakdown-list';
+              
+              combo.breakdown.forEach(item => {
+                const breakdown = document.createElement('div');
+                breakdown.className = 'breakdown-item';
+                breakdown.textContent = `${item.favorite}: ${item.count} customers`;
+                breakdownDiv.appendChild(breakdown);
+              });
+              
+              info.appendChild(breakdownDiv);
+              comboDiv.appendChild(tagsDiv);
+              comboDiv.appendChild(info);
+              areaDiv.appendChild(comboDiv);
+            });
+          }
+
+          coverageContent.appendChild(areaDiv);
+        });
+        
+        // If no areas found, show message
+        if (sortedAreas.length === 0) {
+          const noResults = document.createElement('div');
+          noResults.className = 'no-results';
+          noResults.textContent = 'No customers match your search criteria';
+          coverageContent.appendChild(noResults);
+        }
+      }
+
+      // Find combinations of favorites that cover at least 8 customers
+      function findCombinationsForArea(favorites, size, customers) {
+        const combinations = [];
+        
+        // For size=1, check each favorite individually
+        if (size === 1) {
+          favorites.forEach(fav => {
+            // Count customers who have this exact favorite
+            const customersWithFav = customers.filter(person => 
+              person.Favorites.includes(fav)
+            );
+            
+            if (customersWithFav.length >= 8) {
+              combinations.push({
+                favorites: [fav],
+                coverage: customersWithFav.length,
+                percentage: (customersWithFav.length / customers.length * 100).toFixed(1),
+                breakdown: [{
+                  favorite: fav,
+                  count: customersWithFav.length
+                }]
+              });
+            }
+          });
+          return combinations;
+        }
+        
+        // For combinations of size > 1
+        function generateCombinations(start, currentSet) {
+          if (currentSet.length === size) {
+            // Calculate which customers like ANY of these favorites
+            const coveredCustomers = customers.filter(person => 
+              currentSet.some(fav => person.Favorites.includes(fav))
+            );
+            
+            if (coveredCustomers.length >= 8) {
+              // Create breakdown of individual favorite counts
+              const breakdown = currentSet.map(fav => ({
+                favorite: fav,
+                count: customers.filter(p => p.Favorites.includes(fav)).length
+              }));
+              
+              combinations.push({
+                favorites: [...currentSet],
+                coverage: coveredCustomers.length,
+                percentage: (coveredCustomers.length / customers.length * 100).toFixed(1),
+                breakdown: breakdown
+              });
+            }
+            return;
+          }
+          
+          // Generate all possible combinations
+          for (let i = start; i < favorites.length; i++) {
+            currentSet.push(favorites[i]);
+            generateCombinations(i + 1, currentSet);
+            currentSet.pop();
+          }
+        }
+        
+        generateCombinations(0, []);
+        
+        // Sort by efficiency (fewer favorites first, then higher coverage)
+        combinations.sort((a, b) => {
+          if (a.favorites.length !== b.favorites.length) {
+            return a.favorites.length - b.favorites.length;
+          }
+          return b.coverage - a.coverage;
+        });
+        
+        return combinations;
+      }
+
+      function calculateAreaAnalysis() {
+        const areaContent = document.getElementById('areaContent');
+        areaContent.innerHTML = '';
+
+        const analysis = {};
+        const areaCount = {};
+        
+        rawData.forEach(person => {
+          if (!analysis[person.Area]) {
+            analysis[person.Area] = {};
+            areaCount[person.Area] = 0;
+          }
+          areaCount[person.Area]++;
+          
+          person.Favorites.forEach(fav => {
+            analysis[person.Area][fav] = (analysis[person.Area][fav] || 0) + 1;
+          });
+        });
+
+        Object.keys(analysis).sort().forEach(area => {
+          const areaDiv = document.createElement('div');
+          areaDiv.className = 'area-summary';
+          
+          const areaTitle = document.createElement('h4');
+          areaTitle.textContent = area;
+          areaDiv.appendChild(areaTitle);
+
+          // Sort and show top favorites for area analysis
+          const sortedFavorites = Object.entries(analysis[area])
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 5);
+
+          sortedFavorites.forEach(([fav, count]) => {
+            const favDiv = document.createElement('div');
+            favDiv.className = 'favorite-stat';
+            
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.textContent = fav;
+            
+            if (favoriteColors[fav]) {
+              tag.style.backgroundColor = favoriteColors[fav];
+              tag.style.color = getContrastColor(favoriteColors[fav]);
+            }
+            
+            const percentage = document.createElement('span');
+            percentage.className = 'percentage';
+            const percentValue = ((count / areaCount[area]) * 100).toFixed(1);
+            percentage.textContent = `${percentValue}% (${count})`;
+            
+            favDiv.appendChild(tag);
+            favDiv.appendChild(percentage);
+            areaDiv.appendChild(favDiv);
+          });
+
+          areaContent.appendChild(areaDiv);
+        });
       }
     </script>
   </body>
