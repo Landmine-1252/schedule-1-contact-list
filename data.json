@@ -202,6 +202,60 @@
       "Area": "Downtown",
       "Standards": "Moderate",
       "Favorites": ["Refreshing", "Shrinking", "Foggy"]
+    },
+    {
+      "Name": "Lisa Gardener",
+      "Area": "Docks",
+      "Standards": "Moderate",
+      "Favorites": ["Laxative", "Schizophrenic", "Anti-Gravity"]
+    },
+    {
+      "Name": "Anna Chesterfield",
+      "Area": "Docks",
+      "Standards": "Moderate",
+      "Favorites": ["Refreshing", "Thought-Provoking", "Euphoric"]
+    },
+    {
+      "Name": "Genghis Barn",
+      "Area": "Docks",
+      "Standards": "Very Low",
+      "Favorites": ["Electrifying", "Gingeritis", "Athletic"]
+    },
+    {
+      "Name": "Cranky Frank",
+      "Area": "Docks",
+      "Standards": "Moderate",
+      "Favorites": ["Laxative", "Toxic", "Tropic Thunder"]
+    },
+    {
+      "Name": "Javier Perez",
+      "Area": "Docks",
+      "Standards": "Moderate",
+      "Favorites": []
+    },
+    {
+      "Name": "Marco Barone",
+      "Area": "Docks",
+      "Standards": "Moderate",
+      "Favorites": ["Sneaky", "Long faced", "Refreshing"]
+    },
+    {
+      "Name": "Melissa Wood",
+      "Area": "Docks",
+      "Standards": "Moderate",
+      "Favorites": ["Anti-Gravity", "Refreshing", "Slippery"]
+    },
+    {
+      "Name": "Mac Cooper",
+      "Area": "Docks",
+      "Standards": "Moderate",
+      "Favorites": ["Focused", "Spicy", "Long faced"]
+    },
+    {
+      "Name": "Billy Kramer",
+      "Area": "Docks",
+      "Standards": "Moderate",
+      "Favorites": ["Spicy", "Schizophrenic", "Long faced"]
     }
   ]
   
