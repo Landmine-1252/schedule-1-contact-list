@@ -154,6 +154,54 @@
       "Area": "Downtown",
       "Standards": "Moderate",
       "Favorites": ["Shrinking", "Slippery", "Toxic"]
+    },
+    {
+      "Name": "Kevin Oakley",
+      "Area": "Downtown",
+      "Standards": "Moderate",
+      "Favorites": []
+    },
+    {
+      "Name": "Louis Fourier",
+      "Area": "Downtown",
+      "Standards": "Moderate",
+      "Favorites": ["Shrinking", "Seizure-Inducing", "Paranoia"]
+    },
+    {
+      "Name": "Lucy Pennington",
+      "Area": "Downtown",
+      "Standards": "Moderate",
+      "Favorites": ["Calorie-Dense", "Euphoric", "Glowing"]
+    },
+    {
+      "Name": "Randy Caulfield",
+      "Area": "Downtown",
+      "Standards": "Moderate",
+      "Favorites": []
+    },
+    {
+      "Name": "Eugene Buckley",
+      "Area": "Downtown",
+      "Standards": "Moderate",
+      "Favorites": ["Schizophrenic", "Toxic", "Calming"]
+    },
+    {
+      "Name": "Greg Figgle",
+      "Area": "Downtown",
+      "Standards": "Very Low",
+      "Favorites": ["Euphoric", "Tropic Thunder", "Toxic"]
+    },
+    {
+      "Name": "Jeff Gilmore",
+      "Area": "Downtown",
+      "Standards": "Moderate",
+      "Favorites": ["Sedating", "Long faced", "Laxative"]
+    },
+    {
+      "Name": "Philip Wentworth",
+      "Area": "Downtown",
+      "Standards": "Moderate",
+      "Favorites": ["Refreshing", "Shrinking", "Foggy"]
     }
   ]
   
