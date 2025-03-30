@@ -1,0 +1,531 @@
+/* Custom styles for Pico CSS */
+
+/* Light/Dark mode support */
+:root:not([data-theme="dark"]) {
+  --primary: #7952b3;
+  --primary-hover: #6742a3;
+  --primary-focus: rgba(121, 82, 179, 0.125);
+  --primary-inverse: #FFF;
+  --tag-background: var(--card-background-color);
+  --tag-color: var(--card-sectionning-color);
+  --badge-bg: rgba(121, 82, 179, 0.1);
+  --badge-color: var(--primary);
+  --saving-bg: rgba(0, 0, 0, 0.8);
+  --saving-color: white;
+  --success-bg: rgba(46, 125, 50, 0.9);
+  --success-color: white;
+}
+
+:root[data-theme="dark"] {
+  --primary: #9e75e0;
+  --primary-hover: #b08fe9;
+  --primary-focus: rgba(158, 117, 224, 0.25);
+  --primary-inverse: #FFF;
+  --tag-background: var(--card-background-color);
+  --tag-color: var(--card-sectionning-color);
+  --badge-bg: rgba(158, 117, 224, 0.2);
+  --badge-color: var(--primary);
+  --saving-bg: rgba(0, 0, 0, 0.8);
+  --saving-color: white;
+  --success-bg: rgba(76, 175, 80, 0.9);
+  --success-color: white;
+}
+
+/* Layout */
+body {
+  animation: fadein 0.5s;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--card-border-color);
+  padding-bottom: 1rem;
+}
+
+header h1 {
+  margin-bottom: 0.5rem;
+}
+
+.theme-switcher {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+header nav ul {
+  margin-top: 1rem;
+}
+
+footer {
+  margin-top: 2rem;
+  border-top: 1px solid var(--card-border-color);
+  padding-top: 1rem;
+  text-align: center;
+}
+
+/* Update main layout */
+main {
+  display: grid;
+  grid-template-columns: 250px 1fr; /* Fixed 250px sidebar, rest for content */
+  gap: 2rem;
+}
+
+/* Update filters container */
+.filters-container {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Adjust the filter column styles */
+.filter-column fieldset {
+  margin: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--card-border-color);
+  border-radius: var(--border-radius);
+}
+
+/* Remove scrolling from checkbox groups */
+.checkbox-group {
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border-radius: var(--border-radius);
+  background-color: var(--card-background-color);
+  font-size: 0.9rem;
+  max-height: none; /* Remove max height */
+  overflow-y: visible; /* Remove scroll */
+}
+
+/* Move search to top of content area */
+.search-wrapper {
+  grid-column: 2;
+  margin-bottom: 1rem;
+}
+
+/* Search */
+.results-count {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--muted-color);
+}
+
+/* Tags */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tags.small {
+  gap: 0.3rem;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  background-color: var(--tag-background);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.tags.small .tag {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.4rem;
+}
+
+/* Person Cards */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  min-height: 200px; /* Ensure consistent height even when empty */
+  transition: opacity 0.2s;
+}
+
+.cards-grid.filtering {
+  opacity: 0.6;
+}
+
+.person-card {
+  padding: 0;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  will-change: transform;
+  contain: layout;
+  border-radius: var(--border-radius);
+  break-inside: avoid;
+  min-height: 350px;
+  transform: translateZ(0); /* Force GPU acceleration */
+  backface-visibility: hidden; /* Prevent flickering */
+}
+
+.person-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.person-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--card-border-color);
+  transition: opacity 0.3s;
+  background-color: var(--card-background-color);
+}
+
+.card-content {
+  padding: 1rem;
+}
+
+.card-content h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+/* Loading states */
+.spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 1rem;
+  border: 4px solid var(--card-border-color);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#loading-message {
+  text-align: center;
+  padding: 2rem;
+  grid-column: 1 / -1;
+}
+
+#loading-message.error {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #d32f2f;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+/* No Results */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--card-background-color);
+  border-radius: var(--border-radius);
+}
+
+/* Saving Indicator */
+.saving-indicator, .success-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  z-index: 9999;
+  animation: fadein 0.3s;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.saving-indicator {
+  background-color: var(--saving-bg);
+  color: var(--saving-color);
+}
+
+.success-indicator {
+  background-color: var(--success-bg);
+  color: var(--success-color);
+}
+
+/* Color Mapping */
+.tags-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tag-sample {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--card-border-color);
+  border-radius: var(--border-radius);
+}
+
+.tag-sample .tag {
+  flex: 1;
+  text-align: center;
+}
+
+/* Action Buttons */
+.action-buttons {
+  margin: 1.5rem 0;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Category Management */
+.data-category {
+  margin-bottom: 2rem;
+  background-color: var(--card-background-color);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+}
+
+.data-category h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.category-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border: 1px solid var(--card-border-color);
+  border-radius: var(--border-radius);
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--card-border-color);
+}
+
+.category-item:last-child {
+  border-bottom: none;
+}
+
+.category-item button {
+  margin: 0;
+  padding: 0.2rem 0.5rem;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* Choices.js customization */
+.choices {
+  margin-bottom: 0 !important;
+}
+
+.choices__inner {
+  background-color: var(--background-color) !important;
+  border-color: var(--form-element-border-color) !important;
+}
+
+.choices__list--dropdown {
+  background-color: var(--card-background-color) !important;
+  border-color: var(--form-element-border-color) !important;
+}
+
+.choices__list--dropdown .choices__item {
+  color: var(--color) !important;
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted {
+  background-color: var(--primary) !important;
+  color: var(--primary-inverse) !important;
+}
+
+.choices__list--multiple .choices__item {
+  background-color: var(--primary) !important;
+  border-color: var(--primary-hover) !important;
+}
+
+/* Tab System - HORIZONTAL TABS */
+.tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--card-border-color);
+  position: sticky;
+  top: 0;
+  background-color: var(--background-color);
+  z-index: 100;
+  padding: 0.5rem 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  opacity: 0.6;
+  margin: 0;
+  box-shadow: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease-in-out;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  opacity: 0.8;
+  background: none;
+  box-shadow: none;
+}
+
+.tab-btn.active {
+  opacity: 1;
+  font-weight: bold;
+  border-bottom: 2px solid var(--primary);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeEffect 0.3s;
+}
+
+@keyframes fadeEffect {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+/* Performance optimizations for index.html to prevent flickering */
+.cards-grid {
+  contain: content;
+  will-change: contents;
+  min-height: 200px;
+}
+
+.person-card {
+  contain: content;
+  contain-intrinsic-size: 300px 400px;
+  will-change: transform;
+}
+
+/* Update responsive layout */
+@media (max-width: 768px) {
+  main {
+    grid-template-columns: 1fr; /* Stack on mobile */
+    gap: 1rem;
+  }
+  
+  .search-wrapper {
+    grid-column: 1;
+  }
+  
+  .theme-switcher {
+    position: static;
+    margin-bottom: 1rem;
+  }
+  
+  .tags-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+  
+  #manageDataSection {
+    display: block;
+  }
+  
+  .tabs {
+    overflow-x: auto;
+    padding-bottom: 0;
+  }
+  
+  .checkbox-group {
+    max-height: 120px;
+  }
+}
+
+@media (max-width: 576px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .action-buttons button {
+    width: 100%;
+  }
+  
+  .tab-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .checkbox-group {
+    max-height: 150px;
+  }
+  
+  .filters-container {
+    display: block;
+  }
+}
+
+/* Style for favorite filters */
+#favoritesFilters .checkbox-item label {
+  border-radius: var(--border-radius);
+  padding: 0.1rem 0.5rem;
+}
+
+/* Update checkbox item styles */
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding: 0.15rem;
+  min-height: 1.8rem;
+  height: 1.8rem;
+  white-space: nowrap; /* Prevent wrapping */
+  overflow: hidden; /* Hide overflow */
+}
+
+.checkbox-item label {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  margin: 0;
+  padding: 0 0.5rem;
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis for overflow */
+  min-width: 0; /* Allow flex item to shrink below content size */
+  flex: 1;
+}
+
+/* Style for the colored span in favorites */
+.checkbox-item label .favorite-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--border-radius);
+  max-width: 150px; /* Limit maximum width */
+}
+
+/* Style for the count */
+.checkbox-item label .count-text {
+  margin-left: 0.3rem;
+  flex-shrink: 0; /* Prevent count from shrinking */
+} 

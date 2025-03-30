@@ -1,0 +1,159 @@
+[
+    {
+      "Name": "Kyle Cooley",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Calming", "Munchies", "Smelly"]
+    },
+    {
+      "Name": "Jessi Waters",
+      "Area": "Northtown",
+      "Standards": "Very Low",
+      "Favorites": ["Energizing", "Paranoia", "Sneaky"]
+    },
+    {
+      "Name": "Austin Steiner",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Calorie-Dense", "Euphoric", "Munchies"]
+    },
+    {
+      "Name": "Kathy Henderson",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Athletic", "Energizing", "Focused"]
+    },
+    {
+      "Name": "Mick Lubbin",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Euphoric", "Bright-Eyed", "Sneaky"]
+    },
+    {
+      "Name": "Sam Thompson",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Munchies", "Athletic", "Smelly"]
+    },
+    {
+      "Name": "Peter File",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Focused", "Refreshing", "Sneaky"]
+    },
+    {
+      "Name": "Donna Martin",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Refreshing", "Lethal", "Munchies"]
+    },
+    {
+      "Name": "Geraldine Poon",
+      "Area": "Northtown",
+      "Standards": "Very Low",
+      "Favorites": ["Balding", "Long faced", "Sedating"]
+    },
+    {
+      "Name": "Chloe Bowers",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Euphoric", "Shrinking", "Munchies"]
+    },
+    {
+      "Name": "Peggy Myers",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Bright-Eyed", "Refreshing", "Energizing"]
+    },
+    {
+      "Name": "Ludwig Meyer",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Euphoric", "Refreshing", "Energizing"]
+    },
+    {
+      "Name": "Beth Penn",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Schizophrenic", "Lethal", "Seizure-Inducing"]
+    },
+    {
+      "Name": "Mrs. Ming",
+      "Area": "Northtown",
+      "Standards": "Low",
+      "Favorites": ["Gingeritis", "Shrinking", "Electrifying"]
+    },
+    {
+      "Name": "Trent Sherman",
+      "Area": "Westville",
+      "Standards": "Low",
+      "Favorites": ["Athletic", "Balding", "Calorie-Dense"]
+    },
+    {
+      "Name": "Meg Cooley",
+      "Area": "Westville",
+      "Standards": "Low",
+      "Favorites": ["Sneaky", "Slippery", "Thought-Provoking"]
+    },
+    {
+      "Name": "Joyce Ball",
+      "Area": "Westville",
+      "Standards": "Low",
+      "Favorites": ["Euphoric", "Thought-Provoking", "Calorie-Dense"]
+    },
+    {
+      "Name": "Keith Wagner",
+      "Area": "Westville",
+      "Standards": "Very Low",
+      "Favorites": ["Slippery", "Sneaky", "Tropic Thunder"]
+    },
+    {
+      "Name": "Doris Lubbin",
+      "Area": "Westville",
+      "Standards": "Low",
+      "Favorites": ["Spicy", "Tropic Thunder", "Balding"]
+    },
+    {
+      "Name": "Jerry Montero",
+      "Area": "Westville",
+      "Standards": "Low",
+      "Favorites": ["Gingeritis", "Smelly", "Thought-Provoking"]
+    },
+    {
+      "Name": "Kim Delaney",
+      "Area": "Westville",
+      "Standards": "Low",
+      "Favorites": ["Shrinking", "Jennerising", "Focused"]
+    },
+    {
+      "Name": "Dan Webster",
+      "Area": "Westville",
+      "Standards": "Low",
+      "Favorites": ["Glowing", "Laxative", "Spicy"]
+    },
+    {
+      "Name": "Charles Rowland",
+      "Area": "Westville",
+      "Standards": "Low",
+      "Favorites": ["Sedating", "Disorienting", "Foggy"]
+    },
+    {
+      "Name": "George Greene",
+      "Area": "Westville",
+      "Standards": "Low",
+      "Favorites": ["Energizing", "Focused", "Thought-Provoking"]
+    },
+    {
+      "Name": "Elizabeth Homley",
+      "Area": "Downtown",
+      "Standards": "Moderate",
+      "Favorites": ["Sedating", "Tropic Thunder", "Toxic"]
+    },
+    {
+      "Name": "Jennifer Rivera",
+      "Area": "Downtown",
+      "Standards": "Moderate",
+      "Favorites": ["Shrinking", "Slippery", "Toxic"]
+    }
+  ]
+  
