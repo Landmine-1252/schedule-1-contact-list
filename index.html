@@ -47,6 +47,12 @@
           </div>
 
           <div class="filter-column">
+            <div class="filter-mode">
+              <label>
+                <input type="checkbox" id="matchAllToggle">
+                Match all selected favorites
+              </label>
+            </div>
             <fieldset>
               <legend>
                 <details class="filter-accordion">
@@ -93,13 +99,20 @@
         areas: [],
         standards: [],
         favorites: [],
-        nameSearch: ''
+        nameSearch: '',
+        matchAllFavorites: true  // Add new setting for match mode
       };
 
       // Theme toggling
       document.getElementById('themeToggle').addEventListener('click', () => {
         document.documentElement.setAttribute('data-theme', 
           document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+      });
+
+      // Match mode toggling
+      document.getElementById('matchAllToggle').addEventListener('change', (e) => {
+        activeFilters.matchAllFavorites = e.target.checked;
+        filterData();
       });
 
       // Fetch data on page load
@@ -275,34 +288,51 @@
           const matchesStandardsFilters = activeFilters.standards.length === 0 || 
                                          activeFilters.standards.includes(person.Standards);
           
-          const matchesFavoritesFilters = activeFilters.favorites.length === 0 || 
-                                         activeFilters.favorites.every(fav => person.Favorites.includes(fav));
+          // Match favorites (ALL or ANY of the selected favorites)
+          const matchFavorites = activeFilters.favorites.length === 0 || 
+                                (activeFilters.matchAllFavorites ? 
+                                  activeFilters.favorites.every(fav => person.Favorites.includes(fav)) :
+                                  activeFilters.favorites.some(fav => person.Favorites.includes(fav)));
           
           // Count for area filters
-          if (matchesName && matchesStandardsFilters && matchesFavoritesFilters) {
+          if (matchesName && matchesStandardsFilters && matchFavorites) {
             counts.area[person.Area] = (counts.area[person.Area] || 0) + 1;
           }
           
           // Count for standards filters
-          if (matchesName && matchesAreaFilters && matchesFavoritesFilters) {
+          if (matchesName && matchesAreaFilters && matchFavorites) {
             counts.standards[person.Standards] = (counts.standards[person.Standards] || 0) + 1;
           }
           
-          // Count for favorites filters (show count if adding this favorite to current selection)
+          // Count for favorites filters
           if (matchesName && matchesAreaFilters && matchesStandardsFilters) {
             // For each favorite, check how many would match with this favorite
             [...new Set(person.Favorites)].forEach(fav => {
-              // For selected favorites, check if this person matches all OTHER selected favorites
               if (activeFilters.favorites.includes(fav)) {
-                const otherFavorites = activeFilters.favorites.filter(f => f !== fav);
-                if (otherFavorites.every(f => person.Favorites.includes(f))) {
+                // For selected favorites, check based on match mode
+                if (activeFilters.matchAllFavorites) {
+                  // Check if matches all OTHER selected favorites
+                  const otherFavorites = activeFilters.favorites.filter(f => f !== fav);
+                  if (otherFavorites.every(f => person.Favorites.includes(f))) {
+                    counts.favorites[fav] = (counts.favorites[fav] || 0) + 1;
+                  }
+                } else {
+                  // In ANY mode, just count if person has this favorite
                   counts.favorites[fav] = (counts.favorites[fav] || 0) + 1;
                 }
               } else {
-                // For unselected favorites, check if adding this favorite would still match
-                const wouldMatch = [...activeFilters.favorites, fav].every(f => person.Favorites.includes(f));
-                if (wouldMatch) {
-                  counts.favorites[fav] = (counts.favorites[fav] || 0) + 1;
+                // For unselected favorites
+                if (activeFilters.matchAllFavorites) {
+                  // Check if adding this favorite would match all
+                  const wouldMatch = [...activeFilters.favorites, fav].every(f => person.Favorites.includes(f));
+                  if (wouldMatch) {
+                    counts.favorites[fav] = (counts.favorites[fav] || 0) + 1;
+                  }
+                } else {
+                  // In ANY mode, just count if person has this favorite
+                  if (person.Favorites.includes(fav)) {
+                    counts.favorites[fav] = (counts.favorites[fav] || 0) + 1;
+                  }
                 }
               }
             });
@@ -367,9 +397,11 @@
             const matchStandards = activeFilters.standards.length === 0 || 
                                   activeFilters.standards.includes(person.Standards);
             
-            // Match favorites (ALL of the selected favorites)
+            // Match favorites (ALL or ANY of the selected favorites)
             const matchFavorites = activeFilters.favorites.length === 0 || 
-                                  activeFilters.favorites.every(fav => person.Favorites.includes(fav));
+                                  (activeFilters.matchAllFavorites ? 
+                                    activeFilters.favorites.every(fav => person.Favorites.includes(fav)) :
+                                    activeFilters.favorites.some(fav => person.Favorites.includes(fav)));
             
             return matchName && matchArea && matchStandards && matchFavorites;
           });
