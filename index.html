@@ -405,6 +405,9 @@
             
             return matchName && matchArea && matchStandards && matchFavorites;
           });
+
+          // Sort filtered data alphabetically by name
+          filteredData.sort((a, b) => a.Name.localeCompare(b.Name));
           
           // Update the filter counts
           updateFilterCounts();
