@@ -1,6 +1,6 @@
 # Schedule 1 - Customer List
 
-**Live Version:** [https://landmine-1252.github.io/schedule-1-contact-list/](https://landmine-1252.github.io/schedule-1-contact-list/)
+**Live Version:** [https://landmine-1252.github.io/schedule-1-customer-list/](https://landmine-1252.github.io/schedule-1-customer-list/)
 
 A web-based tool for analyzing customer preferences across different areas to help you identify optimal combinations of favorites to stock in each location.
 

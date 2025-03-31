@@ -695,3 +695,88 @@ main {
   font-size: 0.9rem;
   color: var(--muted-color);
 }
+
+/* Loading and Error States */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted-color);
+  animation: pulse 1.5s infinite;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #d32f2f;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: var(--border-radius);
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Accessibility Improvements */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Keyboard Navigation */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Mobile Responsiveness Improvements */
+@media (max-width: 768px) {
+  .filters-container {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    background-color: var(--background-color);
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--card-border-color);
+  }
+  
+  .filter-column {
+    margin-bottom: 0.5rem;
+  }
+  
+  .checkbox-group {
+    max-height: 150px;
+    overflow-y: auto;
+  }
+  
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .person-card {
+    min-height: auto;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (forced-colors: active) {
+  .tag {
+    border: 1px solid ButtonText;
+    background-color: Canvas;
+    color: ButtonText;
+  }
+  
+  .tag:hover {
+    background-color: Highlight;
+    color: HighlightText;
+  }
+}

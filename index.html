@@ -48,23 +48,24 @@
               <li>Toggle between "Match all" or "Match any" mode for favorite filters</li>
               <li>Search by customer name to find specific preferences</li>
             </ul>
+            <p class="visually-hidden">Keyboard shortcuts: Press 'f' to focus search, 't' to toggle theme, 'm' to toggle match mode</p>
           </div>
         </details>
         
         <div class="theme-switcher">
-          <button id="themeToggle">Toggle Theme</button>
+          <button id="themeToggle" aria-label="Toggle theme">Toggle Theme</button>
         </div>
       </header>
 
       <main>
         <!-- Filter Controls -->
-        <div class="filters-container">
+        <div class="filters-container" role="region" aria-label="Filter controls">
           <div class="filter-column">
             <fieldset>
               <legend>
                 <details class="filter-accordion" open>
                   <summary>Filter by Area <span class="filter-count"></span></summary>
-                  <div id="areaFilters" class="checkbox-group">
+                  <div id="areaFilters" class="checkbox-group" role="group" aria-label="Area filters">
                     <!-- Will be populated dynamically -->
                   </div>
                 </details>
@@ -77,7 +78,7 @@
               <legend>
                 <details class="filter-accordion">
                   <summary>Filter by Standards <span class="filter-count"></span></summary>
-                  <div id="standardsFilters" class="checkbox-group">
+                  <div id="standardsFilters" class="checkbox-group" role="group" aria-label="Standards filters">
                     <!-- Will be populated dynamically -->
                   </div>
                 </details>
@@ -88,7 +89,7 @@
           <div class="filter-column">
             <div class="filter-mode">
               <label>
-                <input type="checkbox" id="matchAllToggle">
+                <input type="checkbox" id="matchAllToggle" aria-label="Match all selected favorites">
                 Match all selected favorites
               </label>
             </div>
@@ -96,7 +97,7 @@
               <legend>
                 <details class="filter-accordion">
                   <summary>Filter by Favorites <span class="filter-count"></span></summary>
-                  <div id="favoritesFilters" class="checkbox-group">
+                  <div id="favoritesFilters" class="checkbox-group" role="group" aria-label="Favorites filters">
                     <!-- Will be populated dynamically -->
                   </div>
                 </details>
@@ -109,7 +110,7 @@
           <!-- Recommendations Tool -->
           <details class="coverage-analysis" open>
             <summary>Customer Coverage Analysis</summary>
-            <div id="coverageContent">
+            <div id="coverageContent" role="region" aria-label="Coverage analysis results">
               <!-- Will be populated dynamically -->
             </div>
           </details>
@@ -117,14 +118,14 @@
           <!-- Name Search -->
           <div class="search-wrapper">
             <label for="nameSearch">Search by Name:</label>
-            <input type="text" id="nameSearch" placeholder="Type a name...">
-            <div class="results-count">
+            <input type="text" id="nameSearch" placeholder="Type a name..." aria-label="Search customers by name">
+            <div class="results-count" aria-live="polite">
               Showing <span id="filteredCount">0</span> of <span id="totalCount">0</span> customers
             </div>
           </div>
 
           <!-- Results -->
-          <div class="cards-grid" id="results">
+          <div class="cards-grid" id="results" role="region" aria-label="Customer results">
             <!-- Results will be populated here -->
           </div>
         </div>
@@ -164,6 +165,10 @@
 
       // Fetch data on page load
       window.addEventListener('DOMContentLoaded', async () => {
+        // Show loading state
+        const resultsContainer = document.getElementById('results');
+        resultsContainer.innerHTML = '<div class="loading">Loading data...</div>';
+        
         // Set initial theme based on user preference
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
@@ -178,7 +183,12 @@
             fetch('colors.json').then(res => res.json())
           ]);
           
-          rawData = peopleData;
+          // Validate and clean data
+          rawData = peopleData.map(person => ({
+            ...person,
+            Favorites: person.Favorites || [] // Ensure Favorites is always an array
+          }));
+          
           favoriteColors = colorsData;
           filteredData = [...rawData];
 
@@ -211,8 +221,7 @@
           calculateAreaAnalysis();
         } catch (err) {
           console.error('Error loading data:', err);
-          const resultsContainer = document.getElementById('results');
-          resultsContainer.innerHTML = '<div class="no-results">Failed to load data. Please try refreshing the page.</div>';
+          resultsContainer.innerHTML = '<div class="error">Failed to load data. Please try refreshing the page.</div>';
         }
 
         // Set up filter listeners
@@ -245,6 +254,7 @@
           input.type = 'checkbox';
           input.id = `${category}-${item.replace(/\s+/g, '-')}`;
           input.value = item;
+          input.setAttribute('aria-label', `${item} (${countByFilter} customers)`);
           
           // Add change event listener
           input.addEventListener('change', (e) => {
@@ -689,7 +699,90 @@
         return luminance > 0.5 ? '#000000' : '#ffffff';
       }
 
-      // Calculate optimal combinations of favorites to cover at least 8 customers per area
+      // Memoization cache for combination calculations
+      const combinationCache = new Map();
+      
+      // Find combinations of favorites that cover at least 8 customers
+      function findCombinationsForArea(favorites, size, customers) {
+        const cacheKey = `${favorites.join(',')}-${size}-${customers.length}`;
+        if (combinationCache.has(cacheKey)) {
+          return combinationCache.get(cacheKey);
+        }
+        
+        const combinations = [];
+        
+        // For size=1, check each favorite individually
+        if (size === 1) {
+          favorites.forEach(fav => {
+            // Count customers who have this exact favorite
+            const customersWithFav = customers.filter(person => 
+              person.Favorites.includes(fav)
+            );
+            
+            if (customersWithFav.length >= 8) {
+              combinations.push({
+                favorites: [fav],
+                coverage: customersWithFav.length,
+                percentage: (customersWithFav.length / customers.length * 100).toFixed(1),
+                breakdown: [{
+                  favorite: fav,
+                  count: customersWithFav.length
+                }]
+              });
+            }
+          });
+          
+          combinationCache.set(cacheKey, combinations);
+          return combinations;
+        }
+        
+        // For combinations of size > 1
+        function generateCombinations(start, currentSet) {
+          if (currentSet.length === size) {
+            // Calculate which customers like ANY of these favorites
+            const coveredCustomers = customers.filter(person => 
+              currentSet.some(fav => person.Favorites.includes(fav))
+            );
+            
+            if (coveredCustomers.length >= 8) {
+              // Create breakdown of individual favorite counts
+              const breakdown = currentSet.map(fav => ({
+                favorite: fav,
+                count: customers.filter(p => p.Favorites.includes(fav)).length
+              }));
+              
+              combinations.push({
+                favorites: [...currentSet],
+                coverage: coveredCustomers.length,
+                percentage: (coveredCustomers.length / customers.length * 100).toFixed(1),
+                breakdown: breakdown
+              });
+            }
+            return;
+          }
+          
+          // Generate all possible combinations
+          for (let i = start; i < favorites.length; i++) {
+            currentSet.push(favorites[i]);
+            generateCombinations(i + 1, currentSet);
+            currentSet.pop();
+          }
+        }
+        
+        generateCombinations(0, []);
+        
+        // Sort by efficiency (fewer favorites first, then higher coverage)
+        combinations.sort((a, b) => {
+          if (a.favorites.length !== b.favorites.length) {
+            return a.favorites.length - b.favorites.length;
+          }
+          return b.coverage - a.coverage;
+        });
+        
+        combinationCache.set(cacheKey, combinations);
+        return combinations;
+      }
+
       function calculateOptimalCoverage() {
         const coverageContent = document.getElementById('coverageContent');
         coverageContent.innerHTML = '';
@@ -825,79 +918,6 @@
         }
       }
 
-      // Find combinations of favorites that cover at least 8 customers
-      function findCombinationsForArea(favorites, size, customers) {
-        const combinations = [];
-        
-        // For size=1, check each favorite individually
-        if (size === 1) {
-          favorites.forEach(fav => {
-            // Count customers who have this exact favorite
-            const customersWithFav = customers.filter(person => 
-              person.Favorites.includes(fav)
-            );
-            
-            if (customersWithFav.length >= 8) {
-              combinations.push({
-                favorites: [fav],
-                coverage: customersWithFav.length,
-                percentage: (customersWithFav.length / customers.length * 100).toFixed(1),
-                breakdown: [{
-                  favorite: fav,
-                  count: customersWithFav.length
-                }]
-              });
-            }
-          });
-          return combinations;
-        }
-        
-        // For combinations of size > 1
-        function generateCombinations(start, currentSet) {
-          if (currentSet.length === size) {
-            // Calculate which customers like ANY of these favorites
-            const coveredCustomers = customers.filter(person => 
-              currentSet.some(fav => person.Favorites.includes(fav))
-            );
-            
-            if (coveredCustomers.length >= 8) {
-              // Create breakdown of individual favorite counts
-              const breakdown = currentSet.map(fav => ({
-                favorite: fav,
-                count: customers.filter(p => p.Favorites.includes(fav)).length
-              }));
-              
-              combinations.push({
-                favorites: [...currentSet],
-                coverage: coveredCustomers.length,
-                percentage: (coveredCustomers.length / customers.length * 100).toFixed(1),
-                breakdown: breakdown
-              });
-            }
-            return;
-          }
-          
-          // Generate all possible combinations
-          for (let i = start; i < favorites.length; i++) {
-            currentSet.push(favorites[i]);
-            generateCombinations(i + 1, currentSet);
-            currentSet.pop();
-          }
-        }
-        
-        generateCombinations(0, []);
-        
-        // Sort by efficiency (fewer favorites first, then higher coverage)
-        combinations.sort((a, b) => {
-          if (a.favorites.length !== b.favorites.length) {
-            return a.favorites.length - b.favorites.length;
-          }
-          return b.coverage - a.coverage;
-        });
-        
-        return combinations;
-      }
-
       function calculateAreaAnalysis() {
         const areaContent = document.getElementById('areaContent');
         areaContent.innerHTML = '';
@@ -956,6 +976,27 @@
           areaContent.appendChild(areaDiv);
         });
       }
+
+      // Add keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        // Only trigger if not in an input field
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        
+        switch(e.key.toLowerCase()) {
+          case 'f':
+            e.preventDefault();
+            document.getElementById('nameSearch').focus();
+            break;
+          case 't':
+            e.preventDefault();
+            document.getElementById('themeToggle').click();
+            break;
+          case 'm':
+            e.preventDefault();
+            document.getElementById('matchAllToggle').click();
+            break;
+        }
+      });
     </script>
   </body>
 </html>
